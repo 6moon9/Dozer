@@ -1,23 +1,23 @@
 #include <Bluetooth.h>
 #include <Mecanum.h>
 #include <Report.h>
+#include <BlackLineSensor.h>
+#include <HCSR04.h>
 
 #define loopTime 100
-
-Bluetooth bluetooth(&Serial1);
 
 Mecanum mecanum;
 
 struct
 {
-    void forward (int speed)
+    void left (int speed)
     {
         mecanum.motors[Left][Top].backward(speed);
         mecanum.motors[Left][Bottom].forward(speed);
         mecanum.motors[Right][Top].backward(speed);
         mecanum.motors[Right][Bottom].forward(speed);
     }
-    void backward (int speed)
+    void right (int speed)
     {
         mecanum.motors[Left][Top].forward(speed);
         mecanum.motors[Left][Bottom].backward(speed);
@@ -42,7 +42,6 @@ struct
         mecanum.motors[Right][Bottom].stop();
     }
 } diagonal;
-
 struct Mecaside
 {
     public:
@@ -68,9 +67,14 @@ struct Mecaside
         }
 };
 
+/* Warning! All the pins are fakes and are here only for compilation test. For real upload, please change them with the real ones. */
+
+Bluetooth bluetooth(&Serial1);
 Mecaside left(Left);
 Mecaside right(Right);
 Report report(&Serial, true, 5 * (1000 / loopTime));
+BlackLineSensor blackLine(A0, A1, A2);
+HCSR04 backDistance(2, 3);
 
 void setup ()
 {
@@ -94,8 +98,65 @@ void loop ()
     {
       report.ok++;
       serializeJson(bluetooth.json, Serial);
+      bool motors = true;
+      // AutoPilot //
+      {
+        void findTheLineToTheLeft ()
+        {
+          motors = false;
+          mecanum.sideway.left(512);
+          while (blackLine.getPattern != Position.Pattern.OnTheLine);
+          mecanum.stop();
+        }
+        void findTheLineToTheRight ()
+        {
+          motors = false;
+          mecanum.sideway.right(512);
+          while (blackLine.getPattern != Position.Pattern.OnTheLine);
+          mecanum.stop();
+        }
+        void goBackToCherry ()
+        {
+          motors = false;
+          mecanum.backward(512);
+          while (blackLine.getPattern() == Position.Pattern.OnTheLine && backDistance.getValue() != -1);
+          if (blackLine.getPattern() != Position.Pattern.OnTheLine)
+          {
+            if (blackLine.getPattern() == Position.Pattern.OnTheRight)
+            {
+              mecanum.left.backward(512);
+              mecanum.right.forward(512);
+              while (blackLine.getPattern() != Position.Pattern.OnTheLine);
+              mecanum.stop();
+              goBackToCherry();
+            }
+          }
+          else
+          {
+            mecanum.stop();
+          }
+        }
+      }
+      // Keybull //
+      {
+        switch (bluetooth.json["keybull"])
+        {
+          case 1:
+            findTheLineToTheRight();
+            goBackToCherry();
+            break;
+          case 2:
+            break;
+          case 3:
+            findTheLineToTheLeft();
+            goBackToCherry();
+            break;
+
+        }
+      }
       // Motors //
       {
+        if (!motors) return;
         int value;
         // Left Y //
         {
@@ -142,19 +203,19 @@ void loop ()
           value = bluetooth.json["joysticks"]["left"]["x"];
           switch (value) {
             case -2:
-              sideway.forward(1023);
+              sideway.left(1023);
               break;
             case -3:
-              sideway.backward(1023);
+              sideway.right(1023);
               break;
             case -1:
               mecanum.stop();
               break;
             default:
               if (value > 512) 
-                sideway.forward(value);
+                sideway.left(value);
               else if (value < 512)
-                sideway.backward(value);
+                sideway.right(value);
           }
         }
         // Right X //
@@ -177,6 +238,13 @@ void loop ()
                 diagonal.backward(value);
           }
         }
+      }
+      // Response //
+      {
+        bluetooth.json.clear();
+        bluetooth.json["blackLine"]["pattern"] = blackLine.getPattern();
+        bluetooth.json["blackLine"]["onTheLine"] = blackLine.lastPattern() == Position.Pattern.OnTheLine;
+        bluetooth.send();
       }
     }
     else
