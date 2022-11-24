@@ -67,7 +67,7 @@ struct Mecaside
         }
 };
 
-/* Warning! All the pins are fakes and are here only for compilation test. For real upload, please change them with the real ones. */
+/* Warning! All the pin numbers are fakes and are for compilation testing only. For real upload, please change them with the real ones. */
 
 Bluetooth bluetooth(&Serial1);
 Mecaside left(Left);
