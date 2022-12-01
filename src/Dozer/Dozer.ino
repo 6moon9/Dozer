@@ -1,25 +1,28 @@
 #include <Bluetooth.h>
 #include <Mecanum.h>
 #include <Report.h>
-//#include <BlackLineSensor.h>
-//#include <HCSR04.h>
+#include <BlackLineSensor.h>
+#include <HCSR04.h>
 
 #define loopTime 100
 
-//                   left             right
-//                top    bottom   top    bottom
+//                   left             right         //
+//                top    bottom   top    bottom     //
 Mecanum mecanum(10, 11,   8, 9,   2, 3,   4, 5);
 
 #include "ExtraMeca.h"
-
-Bluetooth bluetooth(&Serial1);
 Mecaside left(Left);
 Mecaside right(Right);
-Report report(&Serial, true, 5 * (1000 / loopTime));
-//BlackLineSensor blackLine(A0, A1, A2);
-//HCSR04 backDistance(2, 3);
+Sideway sideway;
+Diagonal diagonal;
 
-//void (*findTheLine)() // An void pointer function, can be an option for the autopilot. The other option is a class: AutoPilot autopilot; autopilot.findTheLine();
+Bluetooth bluetooth(&Serial1);
+Report report(&Serial, true, 5 * (1000 / loopTime));
+BlackLineSensor blackLine(A0, A1, A2);
+HCSR04 backDistance(2, 3);
+
+#include "AutoPilot.h"
+AutoPilot autoPilot;
 
 void setup ()
 {
@@ -27,11 +30,12 @@ void setup ()
   {
     Serial1.begin(9600);
     Serial.begin(9600); 
-    Serial.println("Computer serial communication's on...");
+    Serial.println("Serial communication's on...");
+    Serial.println("Bluetooth communication's on...");
   }
   // Mecanum setup //
   {
-    mecanum.stop();
+    stop();
   }
 }
 
@@ -42,6 +46,7 @@ void loop ()
     if (bluetooth.lastError == DeserializationError::Ok)
     {
       report.ok++;
+      report.prob = 0;
       //serializeJson(bluetooth.json, Serial);
       bool motors = true;
       // AutoPilot //
@@ -150,60 +155,37 @@ void loop ()
           }
         }
       }
-      // Response //
+      /*// Response //
       {
         bluetooth.json.clear();
-//        bluetooth.json["blackLine"]["pattern"] = blackLine.getPattern();
-//        bluetooth.json["blackLine"]["onTheLine"] = blackLine.lastPattern == Position.Pattern.OnTheLine;
+        bluetooth.json["blackLine"]["pattern"] = blackLine.getPattern();
+        bluetooth.json["blackLine"]["onTheLine"] = blackLine.lastPattern == Position.Pattern.OnTheLine;
         bluetooth.send();
-      }
+      }*/
     }
     else
     {
       report.inv++;
+      report.prob++;
       bluetooth.empty();
     }
   }
   else
   {
     report.ntr++;
+    report.prob++;
+  }
+  if (report.prob >= 10)
+  {
+    stop();
   }
   report.print();
   delay(loopTime);
 }
-/*
-void findTheLineToTheLeft ()
+
+void stop ()
 {
-  motors = false;
-  mecanum.sideway.left(512);
-  while (blackLine.getPattern != Position.Pattern.OnTheLine);
+  Serial.println("Stop the robot");
   mecanum.stop();
+  // Add others actuators
 }
-void findTheLineToTheRight ()
-{
-  motors = false;
-  mecanum.sideway.right(512);
-  while (blackLine.getPattern != Position.Pattern.OnTheLine);
-  mecanum.stop();
-}
-void goBackToCherry ()
-{
-  motors = false;
-  mecanum.backward(512);
-  while (blackLine.getPattern() == Position.Pattern.OnTheLine && backDistance.getValue() != -1);
-  if (blackLine.getPattern() != Position.Pattern.OnTheLine)
-  {
-    if (blackLine.getPattern() == Position.Pattern.OnTheRight)
-    {
-      mecanum.left.backward(512);
-      mecanum.right.forward(512);
-      while (blackLine.getPattern() != Position.Pattern.OnTheLine);
-      mecanum.stop();
-      goBackToCherry();
-    }
-  }
-  else
-  {
-    mecanum.stop();
-  }
-}*/
