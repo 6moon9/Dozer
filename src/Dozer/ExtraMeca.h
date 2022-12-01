@@ -1,4 +1,4 @@
-struct
+struct Sideway
 {
     void left (int speed)
     {
@@ -14,8 +14,8 @@ struct
         mecanum.motors[Right][Top].forward(speed);
         mecanum.motors[Right][Bottom].backward(speed);
     }
-} sideway;
-struct
+};
+struct Diagonal
 {
     void forward (int speed)
     {
@@ -31,7 +31,7 @@ struct
         mecanum.motors[Right][Top].forward(speed);
         mecanum.motors[Right][Bottom].stop();
     }
-} diagonal;
+};
 class Mecaside
 {
     public:
