@@ -6,8 +6,8 @@
 
 #define loopTime 100
 
-//                   left             right         //
-//                top    bottom   top    bottom     //
+//                   left             right
+//                top    bottom   top    bottom
 Mecanum mecanum(10, 11,   8, 9,   2, 3,   4, 5);
 
 #include "ExtraMeca.h"
@@ -15,10 +15,11 @@ Mecaside left(Left);
 Mecaside right(Right);
 Sideway sideway;
 Diagonal diagonal;
-
 Bluetooth bluetooth(&Serial1);
+//            Serial   debugMode   every 5 seconds
 Report report(&Serial, true, 5 * (1000 / loopTime));
 BlackLineSensor blackLine(A0, A1, A2);
+//                echo trigger
 HCSR04 backDistance(2, 3);
 
 #include "AutoPilot.h"
@@ -29,7 +30,7 @@ void setup ()
   // Serial setup //
   {
     Serial1.begin(9600);
-    Serial.begin(9600); 
+    Serial.begin(9600);
     Serial.println("Serial communication's on...");
     Serial.println("Bluetooth communication's on...");
   }
@@ -41,20 +42,16 @@ void setup ()
 
 void loop ()
 {
+  report.print();
   if (bluetooth.receive())
   {
     if (bluetooth.lastError == DeserializationError::Ok)
     {
       report.ok++;
       report.prob = 0;
-      //serializeJson(bluetooth.json, Serial);
-      bool motors = true;
-      // AutoPilot //
-      {
-        
-      }
+      //serializePrettyJson(bluetooth.json, Serial);
       /*// Keybull //
-      {
+        {
         switch (bluetooth.json["keybull"].as<int>())
         {
           case 1:
@@ -69,10 +66,9 @@ void loop ()
             break;
 
         }
-      }*/
+        }*/
       // Motors //
       {
-        if (!motors) return;
         int value;
         // Left Y //
         {
@@ -88,7 +84,7 @@ void loop ()
               left.stop();
               break;
             default:
-              if (value > 512) 
+              if (value > 512)
                 left.forward(value);
               else if (value < 512)
                 left.backward(value);
@@ -108,7 +104,7 @@ void loop ()
               right.stop();
               break;
             default:
-              if (value > 512) 
+              if (value > 512)
                 right.forward(value);
               else if (value < 512)
                 right.backward(value);
@@ -128,7 +124,7 @@ void loop ()
               mecanum.stop();
               break;
             default:
-              if (value > 512) 
+              if (value > 512)
                 sideway.left(value);
               else if (value < 512)
                 sideway.right(value);
@@ -148,7 +144,7 @@ void loop ()
               mecanum.stop();
               break;
             default:
-              if (value > 512) 
+              if (value > 512)
                 diagonal.forward(value);
               else if (value < 512)
                 diagonal.backward(value);
@@ -156,12 +152,12 @@ void loop ()
         }
       }
       /*// Response //
-      {
+        {
         bluetooth.json.clear();
         bluetooth.json["blackLine"]["pattern"] = blackLine.getPattern();
         bluetooth.json["blackLine"]["onTheLine"] = blackLine.lastPattern == Position.Pattern.OnTheLine;
         bluetooth.send();
-      }*/
+        }*/
     }
     else
     {
@@ -179,13 +175,11 @@ void loop ()
   {
     stop();
   }
-  report.print();
   delay(loopTime);
 }
 
 void stop ()
 {
-  Serial.println("Stop the robot");
   mecanum.stop();
   // Add others actuators
 }
