@@ -121,7 +121,6 @@ void loop ()
               sideway.right(1023);
               break;
             case -1:
-              mecanum.stop();
               break;
             default:
               if (value > 512)
@@ -141,7 +140,6 @@ void loop ()
               diagonal.backward(1023);
               break;
             case -1:
-              mecanum.stop();
               break;
             default:
               if (value > 512)
