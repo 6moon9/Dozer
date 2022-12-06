@@ -3,11 +3,11 @@
 This is the robot code from the Ingenium team.
 
 The INO file depends of the following list of libraries:
-- [Bluetooth](github.com/IngeniumTeam/Bluetooth)
-- [Mecanum](github.com/IngeniumTeam/Mecanum)
-- [BlackLineSensor](github.com/IngeniumTeam/BlackLineSensor)
-- [HCSR04](github.com/IngeniumTeam/HCSR04)
-- [Report](github.com/IngeniumTeam/Report)
+- [Bluetooth](https://github.com/IngeniumTeam/Bluetooth)
+- [Mecanum](https://github.com/IngeniumTeam/Mecanum)
+- [BlackLineSensor](https://github.com/IngeniumTeam/BlackLineSensor)
+- [HCSR04](https://github.com/IngeniumTeam/HCSR04)
+- [Report](https://github.com/IngeniumTeam/Report)
 
 There are two C Header file:
 - [AutoPilot](./src/Dozer/AutoPilot.h): Provides auto pilot functions
