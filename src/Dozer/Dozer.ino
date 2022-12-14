@@ -4,7 +4,8 @@
 #include <BlackLineSensor.h>
 #include <HCSR04.h>
 
-#define loopTime 100
+#define loopTime 40
+#define debugMode true // Pass to false for production
 
 //                   left             right
 //                top    bottom   top    bottom
@@ -16,8 +17,7 @@ Mecaside right(Right);
 Sideway sideway;
 Diagonal diagonal;
 Bluetooth bluetooth(&Serial1);
-//            Serial   debugMode   every 5 seconds
-Report report(&Serial, true, 5 * (1000 / loopTime));
+Report report(&Serial, debugMode, 100);
 BlackLineSensor blackLine(A0, A1, A2);
 //                echo trigger
 HCSR04 backDistance(2, 3);
