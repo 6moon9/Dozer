@@ -7,9 +7,10 @@
 #define loopTime 40
 #define debugMode true // Pass to false for production
 
-//                   left             right
-//                top    bottom   top    bottom
-Mecanum mecanum(10, 11,   8, 9,   2, 3,   4, 5);
+//                          left                                   right
+//                  top              bottom                top              bottom
+Mecanum mecanum(22, 23, 2, 1,   24, 25, 3, 1, 6,       26, 27, 4, 1,   28, 29, 5, 1, 7);
+//            in1,in2,pwm,offs in1,in2,pwm,offs,stby  in1,in2,pwm,offs in1,in2,pwm,offs,stby
 
 #include "ExtraMeca.h"
 Mecaside left(Left);
