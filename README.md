@@ -15,8 +15,8 @@ The [src code](./src/) consists of an arduino sketch containing:
 ##### Robot control
 * `switch...case` the value of the keypad and make actions:
 
-| Number | Key    | Action                 | Description     |
-| :----: | :----: | ---------------------- | --------------- |
+| Number | Key    | Action                 | Description                          |
+| :----: | :----: | ---------------------- | ------------------------------------ |
 | 1      | 1      | collect cherries       | bring the cherries on board          |
 | 2      | 2      | drop cherries (basket) | drop the cherries in the basket      |
 | 3      | 3      | drop cherries (cake)   | drop the cherries on the top of the cake |
