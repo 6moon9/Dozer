@@ -35,7 +35,7 @@ void setup ()
     Serial.println("Serial communication's on...");
     Serial.println("Bluetooth communication's on...");
   }
-  // Mecanum setup //
+  // Stop the robot  //
   {
     stop();
   }
@@ -169,6 +169,7 @@ void loop ()
   {
     report.ntr++;
     report.prob++;
+    bluetooth.empty();
   }
   if (report.prob >= 10)
   {

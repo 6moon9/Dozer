@@ -15,20 +15,20 @@ The [src code](./src/) consists of an arduino sketch containing:
 ##### Robot control
 * `switch...case` the value of the keypad and make actions:
 
-| Number | Key    | Action | Description |
-| :----: | :----: | ------ | ----------- |
-| 1      | 1      |        |             |
-| 2      | 2      |        |             |
-| 3      | 3      |        |             |
-| 4      | 4      |        |             |
-| 5      | 5      |        |             |
-| 6      | 6      |        |             |
-| 7      | 7      |        |             |
-| 8      | 8      |        |             |
-| 9      | 9      |        |             |
-| 10     | #      |        |             |
-| 11     | 0      |        |             |
-| 12     | *      |        |             |
+| Number | Key    | Action        | Description     |
+| :----: | :----: | ------------- | --------------- |
+| 1      | 1      |               |                 |
+| 2      | 2      |               |                 |
+| 3      | 3      |               |                 |
+| 4      | 4      | line on left  |                 |
+| 5      | 5      | line on right |                 |
+| 6      | 6      |               |                 |
+| 7      | 7      |               |                 |
+| 8      | 8      |               |                 |
+| 9      | 9      |               |                 |
+| 10     | #      |               |                 |
+| 11     | 0      |               |                 |
+| 12     | *      |               |                 |
 
 * Control the motors according the values of the joysticks
 

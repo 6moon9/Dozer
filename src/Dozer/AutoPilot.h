@@ -34,4 +34,22 @@ class AutoPilot
         mecanum.stop();
       }
     }
+    void drift ()
+    {
+      mecanum.forward(1023);
+      delay(700);
+      left.forward(128);
+      delay(300);
+      sideway.right(1023);
+      delay(500);
+      right.forward(1023);
+      left.forward(128);
+      delay(100);
+      left.forward(1023);
+      right.forward(128);
+      delay(100);
+      mecanum.forward(1023);
+      delay(500);
+      mecanum.stop();
+    }
 };
