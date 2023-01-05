@@ -15,20 +15,22 @@ The [src code](./src/) consists of an arduino sketch containing:
 ##### Robot control
 * `switch...case` the value of the keypad and make actions:
 
-| Number | Key    | Action        | Description     |
-| :----: | :----: | ------------- | --------------- |
-| 1      | 1      |               |                 |
-| 2      | 2      |               |                 |
-| 3      | 3      |               |                 |
-| 4      | 4      | line on left  |                 |
-| 5      | 5      | line on right |                 |
-| 6      | 6      |               |                 |
-| 7      | 7      |               |                 |
-| 8      | 8      |               |                 |
-| 9      | 9      |               |                 |
-| 10     | #      |               |                 |
-| 11     | 0      |               |                 |
-| 12     | *      |               |                 |
+| Number | Key    | Action                 | Description     |
+| :----: | :----: | ---------------------- | --------------- |
+| 1      | 1      | collect cherries       | bring the cherries on board          |
+| 2      | 2      | drop cherries (basket) | drop the cherries in the basket      |
+| 3      | 3      | drop cherries (cake)   | drop the cherries on the top of the cake |
+| 4      | 4      | line on left           | Go to the left until find the line   |
+| 5      | 5      | follow line            | Follow the line until the robot stops due to obstacle detection |
+| 6      | 6      | line on right          | Go to the right until find the line  |
+| 7      | 7      |                        |                                      |
+| 8      | 8      |                        |                                      |
+| 9      | 9      |                        |                                      |
+| 10     | #      |                        |                                      |
+| 11     | 0      | stop                   | stop the robot (motor and actuators) |
+| 12     | *      | win dance!             | do a little win dance                |
+
+* Read the value of the switch on the top of the bull and open/close the fence of the cakes
 
 * Control the motors according the values of the joysticks
 
