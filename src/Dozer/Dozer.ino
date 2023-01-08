@@ -38,7 +38,7 @@ void setup ()
   // Stop the robot  //
   {
     stop();
-	// autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
+    // autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
   }
 }
 
@@ -49,34 +49,38 @@ void loop ()
   {
     if (bluetooth.lastError == DeserializationError::Ok)
     {
-		report.ok++;
-		report.prob = 0;
-		//serializePrettyJson(bluetooth.json, Serial);
-		// Keybull //
+      report.ok++;
+      report.prob = 0;
+      //serializePrettyJson(bluetooth.json, Serial);
+      // Keypad //
+      {
+        Serial.println(bluetooth.json["keypad"].as<int>());
+        switch (bluetooth.json["keypad"].as<int>())
         {
-			if (bluetooth.json["keybull"].as<int>() == 0) return;
-			switch (bluetooth.json["keybull"].as<int>())
-			{
-				case 4:
-					autoPilot.line.find.left();
-					break;
-				case 5:
-					autoPilot.line.follow.forward();
-					break;
-				case 6:
-					autoPilot.line.find.right();
-					break;
-				case 10:
-					autoPilot.drift();
-					break;
-				case 11:
-					stop();
-					break;
-				case 12:
-					autoPilot.winDance();
-					break;
-			}
+          case 4:
+            autoPilot.line.find.left();
+            Serial.println("find left");
+            break;
+          case 5:
+            autoPilot.line.follow.forward();
+            break;
+          case 6:
+            autoPilot.line.find.right();
+            break;
+          case 10:
+            autoPilot.drift();
+            break;
+          case 11:
+            stop();
+            break;
+          case 12:
+            autoPilot.winDance();
+            Serial.println("winDance");
+            break;
+          default:
+            Serial.println("nothing");
         }
+      }
       // Motors //
       {
         int value;

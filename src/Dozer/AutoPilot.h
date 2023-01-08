@@ -20,7 +20,7 @@ class AutoPilot
 				}
 				void backward (int speed = 1023)
 				{
-					while (backDistance != -1)
+					while (backDistance.getValue() != -1)
 					{
 						mecanum.backward(speed);
 						while (blackLine.getPattern() == Position.Pattern.OnTheRight)
@@ -85,7 +85,7 @@ class AutoPilot
 			delay(500);
 			mecanum.stop();
 		}
-		void windDance ()
+		void winDance ()
 		{
 			left.forward(1023);
 			right.backward(1023);
