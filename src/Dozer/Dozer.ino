@@ -4,7 +4,7 @@
 #include <BlackLineSensor.h>
 #include <HCSR04.h>
 
-#define loopTime 40
+#define loopTime 20
 #define debugMode true // Pass to false for production
 
 //                          left                                   right
@@ -34,6 +34,9 @@ void setup ()
     Serial.begin(9600);
     Serial.println("Serial communication's on...");
     Serial.println("Bluetooth communication's on...");
+#if debugMode
+    Serial.println("Debug mode's on...");
+#endif
   }
   // Stop the robot  //
   {
@@ -51,15 +54,16 @@ void loop ()
     {
       report.ok++;
       report.prob = 0;
-      //serializePrettyJson(bluetooth.json, Serial);
+      //serializeJsonPretty(bluetooth.json, Serial);
       // Keypad //
       {
-        Serial.println(bluetooth.json["keypad"].as<int>());
+#if debugMode
+        Serial.print("key: "); Serial.println(bluetooth.json["keypad"].as<int>()); Serial.println();
+#endif
         switch (bluetooth.json["keypad"].as<int>())
         {
           case 4:
             autoPilot.line.find.left();
-            Serial.println("find left");
             break;
           case 5:
             autoPilot.line.follow.forward();
@@ -75,10 +79,7 @@ void loop ()
             break;
           case 12:
             autoPilot.winDance();
-            Serial.println("winDance");
             break;
-          default:
-            Serial.println("nothing");
         }
       }
       // Motors //
@@ -87,6 +88,9 @@ void loop ()
         // Left Y //
         {
           value = bluetooth.json["joysticks"]["left"]["y"];
+#if debugMode
+          Serial.print("y.l: "); Serial.println(value);
+#endif
           switch (value) {
             case -2:
               left.forward(1023);
@@ -107,6 +111,9 @@ void loop ()
         // Right Y //
         {
           value = bluetooth.json["joysticks"]["right"]["y"];
+#if debugMode
+          Serial.print("y.r: "); Serial.println(value); Serial.println();
+#endif
           switch (value) {
             case -2:
               right.forward(1023);
@@ -164,12 +171,12 @@ void loop ()
         }
       }
       /*// Response //
-        {
+      {
         bluetooth.json.clear();
         bluetooth.json["blackLine"]["pattern"] = blackLine.getPattern();
         bluetooth.json["blackLine"]["onTheLine"] = blackLine.lastPattern == Position.Pattern.OnTheLine;
         bluetooth.send();
-        }*/
+      }*/
     }
     else
     {
@@ -194,5 +201,9 @@ void loop ()
 void stop ()
 {
   mecanum.stop();
+
+#if debugMode
+  Serial.println("emergency stop"); Serial.println();
+#endif
   // Add others actuators
 }
