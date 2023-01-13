@@ -8,13 +8,13 @@
 #define debugMode true // Pass to false for production
 
 //                          left                                   right
-//                  top              bottom                top              bottom
-Mecanum mecanum(22, 23, 2, 1,   24, 25, 3, 1, 6,       26, 27, 4, 1,   28, 29, 5, 1, 7);
+//                   top            bottom                 top             bottom
+Mecanum mecanum(34, 35, 4, 1,   38, 39, 2, 1,   25,     37, 36, 3, 1,   33, 32, 5, 1,   7);
 //            in1,in2,pwm,offs in1,in2,pwm,offs,stby  in1,in2,pwm,offs in1,in2,pwm,offs,stby
 
 #include "ExtraMeca.h"
-Mecaside left(Left);
-Mecaside right(Right);
+Mecaside left(Left, mecanum);
+Mecaside right(Right, mecanum);
 Sideway sideway;
 Diagonal diagonal;
 Bluetooth bluetooth(&Serial1);
@@ -24,7 +24,6 @@ BlackLineSensor blackLine(A0, A1, A2);
 HCSR04 backDistance(2, 3);
 
 #include "AutoPilot.h"
-AutoPilot autoPilot;
 
 void setup ()
 {

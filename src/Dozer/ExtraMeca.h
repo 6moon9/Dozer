@@ -35,9 +35,10 @@ struct Diagonal
 class Mecaside
 {
   public:
-    Mecaside(int iSide)
+    Mecaside(int iSide, Mecanum &iMecanum)
     {
       side = iSide;
+      mecanum = iMecanum;
     }
     int side = 0;
     void forward(int speed)

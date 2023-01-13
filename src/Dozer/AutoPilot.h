@@ -103,4 +103,4 @@ class AutoPilot
 			left.backward(1023);
 			delay(1000);
 		}
-};
+} autoPilot;
