@@ -12,11 +12,8 @@
 Mecanum mecanum(34, 35, 4, 1,   38, 39, 2, 1,   25,     37, 36, 3, 1,   33, 32, 5, 1,   7);
 //            in1,in2,pwm,offs in1,in2,pwm,offs,stby  in1,in2,pwm,offs in1,in2,pwm,offs,stby
 
-#include "ExtraMeca.h"
 Mecaside left(Left, mecanum);
 Mecaside right(Right, mecanum);
-Sideway sideway;
-Diagonal diagonal;
 Bluetooth bluetooth(&Serial1);
 Report report(&Serial, debugMode, 100);
 BlackLineSensor blackLine(A0, A1, A2);
@@ -24,6 +21,7 @@ BlackLineSensor blackLine(A0, A1, A2);
 HCSR04 backDistance(2, 3);
 
 #include "AutoPilot.h"
+AutoPilot autoPilot;
 
 void setup ()
 {
@@ -135,18 +133,18 @@ void loop ()
           value = bluetooth.json["joysticks"]["left"]["x"];
           switch (value) {
             case -2:
-              sideway.left(1023);
+              mecanum.sidewayLeft(1023);
               break;
             case -3:
-              sideway.right(1023);
+              mecanum.sidewayRight(1023);
               break;
             case -1:
               break;
             default:
               if (value > 512)
-                sideway.left(value);
+                mecanum.sidewayLeft(value);
               else if (value < 512)
-                sideway.right(value);
+                mecanum.sidewayRight(value);
           }
         }
         // Right X //
@@ -154,18 +152,18 @@ void loop ()
           value = bluetooth.json["joysticks"]["right"]["x"];
           switch (value) {
             case -2:
-              diagonal.forward(1023);
+              mecanum.diagonalForward(1023);
               break;
             case -3:
-              diagonal.backward(1023);
+              mecanum.diagonalBackward(1023);
               break;
             case -1:
               break;
             default:
               if (value > 512)
-                diagonal.forward(value);
+                mecanum.diagonalForward(value);
               else if (value < 512)
-                diagonal.backward(value);
+                mecanum.diagonalBackward(value);
           }
         }
       }

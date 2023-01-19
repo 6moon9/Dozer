@@ -35,13 +35,13 @@ class AutoPilot
 			{
 				void left (int speed = 512)
 				{
-					sideway.left(speed);
+					mecanum.sidewayLeft(speed);
 					while (blackLine.getPattern() != Position.Pattern.OnTheLine);
 					mecanum.stop();
 				}
 				void right (int speed = 512)
 				{
-					sideway.right(speed);
+					mecanum.sidewayRight(speed);
 					while (blackLine.getPattern() != Position.Pattern.OnTheLine);
 					mecanum.stop();
 				}
@@ -73,7 +73,7 @@ class AutoPilot
 			delay(700);
 			left.forward(128);
 			delay(300);
-			sideway.right(1023);
+			mecanum.sidewayRight(1023);
 			delay(500);
 			right.forward(1023);
 			left.forward(128);
@@ -103,4 +103,4 @@ class AutoPilot
 			left.backward(1023);
 			delay(1000);
 		}
-} autoPilot;
+};
