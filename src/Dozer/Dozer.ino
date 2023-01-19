@@ -81,99 +81,30 @@ void loop ()
       }
       // Motors //
       {
-        int value;
-        // Left Y //
-        {
-          value = bluetooth.json["joysticks"]["left"]["y"];
 #if debugMode
-          Serial.print("y.l: "); Serial.println(value);
+          Serial.print("y.l: "); Serial.println(bluetooth.json["joysticks"]["left"]["y"].as<int>());
+          Serial.print("y.r: "); Serial.println(bluetooth.json["joysticks"]["right"]["y"].as<int>()); Serial.println();
+          Serial.print("x.l: "); Serial.println(bluetooth.json["joysticks"]["left"]["x"].as<int>());
+          Serial.print("x.r: "); Serial.println(bluetooth.json["joysticks"]["right"]["x"].as<int>()); Serial.println(); Serial.println();
 #endif
-          switch (value) {
-            case -2:
-              left.forward(1023);
-              break;
-            case -3:
-              left.backward(1023);
-              break;
-            case -1:
-              left.stop();
-              break;
-            default:
-              if (value > 512)
-                left.forward(value);
-              else if (value < 512)
-                left.backward(value);
-          }
-        }
-        // Right Y //
+        // Y
         {
-          value = bluetooth.json["joysticks"]["right"]["y"];
-#if debugMode
-          Serial.print("y.r: "); Serial.println(value); Serial.println();
-#endif
-          switch (value) {
-            case -2:
-              right.forward(1023);
-              break;
-            case -3:
-              right.backward(1023);
-              break;
-            case -1:
-              right.stop();
-              break;
-            default:
-              if (value > 512)
-                right.forward(value);
-              else if (value < 512)
-                right.backward(value);
-          }
+          left.move(bluetooth.json["joysticks"]["left"]["y"]);
+          right.move(bluetooth.json["joysticks"]["right"]["y"]);
         }
-        // Left X //
+        // X
         {
-          value = bluetooth.json["joysticks"]["left"]["x"];
-          switch (value) {
-            case -2:
-              mecanum.sidewayLeft(1023);
-              break;
-            case -3:
-              mecanum.sidewayRight(1023);
-              break;
-            case -1:
-              break;
-            default:
-              if (value > 512)
-                mecanum.sidewayLeft(value);
-              else if (value < 512)
-                mecanum.sidewayRight(value);
-          }
-        }
-        // Right X //
-        {
-          value = bluetooth.json["joysticks"]["right"]["x"];
-          switch (value) {
-            case -2:
-              mecanum.diagonalForward(1023);
-              break;
-            case -3:
-              mecanum.diagonalBackward(1023);
-              break;
-            case -1:
-              break;
-            default:
-              if (value > 512)
-                mecanum.diagonalForward(value);
-              else if (value < 512)
-                mecanum.diagonalBackward(value);
-          }
+          mecanum.sideway(bluetooth.json["joysticks"]["left"]["x"]);
+          mecanum.diagonal(bluetooth.json["joysticks"]["right"]["x"]);
         }
       }
       /*// Response //
-      {
+        {
         bluetooth.json.clear();
         bluetooth.json["blackLine"]["pattern"] = blackLine.getPattern();
         bluetooth.json["blackLine"]["onTheLine"] = blackLine.lastPattern == Position.Pattern.OnTheLine;
         bluetooth.send();
-      }*/
+        }*/
     }
     else
     {
@@ -197,10 +128,9 @@ void loop ()
 
 void stop ()
 {
-  mecanum.stop();
-
 #if debugMode
-  Serial.println("emergency stop"); Serial.println();
+  Serial.println("stop"); Serial.println();
 #endif
+  mecanum.stop();
   // Add others actuators
 }
