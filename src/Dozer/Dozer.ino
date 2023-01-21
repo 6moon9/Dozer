@@ -7,13 +7,15 @@
 #define loopTime 20
 #define debugMode true // Pass to false for production
 
-//                          left                                   right
-//                   top            bottom                 top             bottom
-Mecanum mecanum(34, 35, 4, 1,   38, 39, 2, 1,   25,     37, 36, 3, 1,   33, 32, 5, 1,   7);
-//            in1,in2,pwm,offs in1,in2,pwm,offs,stby  in1,in2,pwm,offs in1,in2,pwm,offs,stby
+//                          left                                   right                              mapping
+//                   top            bottom                 top             bottom                  from      to
+Mecanum mecanum(34, 35, 4, 1,   38, 39, 2, 1,   25,     37, 36, 3, 1,   32, 33, 5, 1,    7,      0, 1023,  0, 180);
+//            in1,in2,pwm,offs in1,in2,pwm,offs,stby  in1,in2,pwm,offs in1,in2,pwm,offs,stby     min,max   min,max
 
-Mecaside left(Left, mecanum);
-Mecaside right(Right, mecanum);
+#include <ExtraMeca.h>
+Mecaside left(Left);
+Mecaside right(Right);
+
 Bluetooth bluetooth(&Serial1);
 Report report(&Serial, debugMode, 100);
 BlackLineSensor blackLine(A0, A1, A2);
@@ -82,23 +84,23 @@ void loop ()
       // Motors //
       {
 #if debugMode
-          Serial.print("y.l: "); Serial.println(bluetooth.json["joysticks"]["left"]["y"].as<int>());
-          Serial.print("y.r: "); Serial.println(bluetooth.json["joysticks"]["right"]["y"].as<int>()); Serial.println();
-          Serial.print("x.l: "); Serial.println(bluetooth.json["joysticks"]["left"]["x"].as<int>());
-          Serial.print("x.r: "); Serial.println(bluetooth.json["joysticks"]["right"]["x"].as<int>()); Serial.println(); Serial.println();
+        Serial.print("y.l: "); Serial.println(bluetooth.json["joysticks"]["left"]["y"].as<int>());
+        Serial.print("y.r: "); Serial.println(bluetooth.json["joysticks"]["right"]["y"].as<int>()); Serial.println();
+        Serial.print("x.l: "); Serial.println(bluetooth.json["joysticks"]["left"]["x"].as<int>());
+        Serial.print("x.r: "); Serial.println(bluetooth.json["joysticks"]["right"]["x"].as<int>()); Serial.println(); Serial.println();
 #endif
         // Y
         {
-          left.move(bluetooth.json["joysticks"]["left"]["y"]);
-          right.move(bluetooth.json["joysticks"]["right"]["y"]);
+          left.move(bluetooth.json["joysticks"]["left"]["y"].as<int>());
+          right.move(bluetooth.json["joysticks"]["right"]["y"].as<int>());
         }
         // X
         {
-          mecanum.sideway(bluetooth.json["joysticks"]["left"]["x"]);
-          mecanum.diagonal(bluetooth.json["joysticks"]["right"]["x"]);
+          mecanum.sideway(bluetooth.json["joysticks"]["left"]["x"].as<int>());
+          mecanum.diagonal(bluetooth.json["joysticks"]["right"]["x"].as<int>(), bluetooth.json["joysticks"]["left"]["y"].as<int>());
         }
       }
-      /*// Response //
+      /*  // Response //
         {
         bluetooth.json.clear();
         bluetooth.json["blackLine"]["pattern"] = blackLine.getPattern();
