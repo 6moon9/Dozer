@@ -20,7 +20,7 @@ class AutoPilot
         }
         void backward (int speed = 1023)
         {
-          while (backDistance.getValue() != -1)
+          while (true)
           {
             mecanum.backward(speed);
             while (blackLine.getPattern() == Position.Pattern.OnTheRight)
@@ -50,7 +50,7 @@ class AutoPilot
     void goBackToCherry ()
     {
       mecanum.backward(512);
-      while (blackLine.getPattern() == Position.Pattern.OnTheLine && backDistance.getValue() != -1);
+      while (blackLine.getPattern() == Position.Pattern.OnTheLine);
       if (blackLine.getPattern() != Position.Pattern.OnTheLine)
       {
         if (blackLine.getPattern() == Position.Pattern.OnTheRight)

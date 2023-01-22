@@ -2,10 +2,10 @@
 #include <Mecanum.h>
 #include <Report.h>
 #include <BlackLineSensor.h>
-#include <HCSR04.h>
+#include <Led.h>
 
 #define loopTime 20
-#define debugMode true // Pass to false for production
+#define debugMode false // Pass to false for production
 
 //                          left                                   right                              mapping
 //                   top            bottom                 top             bottom                  from      to
@@ -19,8 +19,7 @@ Mecaside right(Right);
 Bluetooth bluetooth(&Serial1);
 Report report(&Serial, debugMode, 100);
 BlackLineSensor blackLine(A0, A1, A2);
-//                echo trigger
-HCSR04 backDistance(2, 3);
+Led bluetoothLed(13);
 
 #include "AutoPilot.h"
 AutoPilot autoPilot;
@@ -31,9 +30,9 @@ void setup ()
   {
     Serial1.begin(9600);
     Serial.begin(9600);
+#if debugMode
     Serial.println("Serial communication's on...");
     Serial.println("Bluetooth communication's on...");
-#if debugMode
     Serial.println("Debug mode's on...");
 #endif
   }
@@ -53,6 +52,7 @@ void loop ()
     {
       report.ok++;
       report.prob = 0;
+      bluetoothLed.on();
       //serializeJsonPretty(bluetooth.json, Serial);
       // Keypad //
       {
@@ -113,6 +113,7 @@ void loop ()
       report.inv++;
       report.prob++;
       bluetooth.empty();
+      bluetoothLed.off();
     }
   }
   else
@@ -120,6 +121,7 @@ void loop ()
     report.ntr++;
     report.prob++;
     bluetooth.empty();
+    bluetoothLed.off();
   }
   if (report.prob >= 10)
   {
