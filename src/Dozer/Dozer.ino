@@ -3,6 +3,7 @@
 #include <Report.h>
 #include <BlackLineSensor.h>
 #include <Led.h>
+#include <Servo.h>
 
 #define loopTime 20
 #define debugMode false // Pass to false for production
@@ -20,9 +21,12 @@ Bluetooth bluetooth(&Serial1);
 Report report(&Serial, debugMode, 100);
 BlackLineSensor blackLine(A0, A1, A2);
 Led bluetoothLed(13);
+Servo bariere;
 
 #include "AutoPilot.h"
 AutoPilot autoPilot;
+
+bool oldSwitchValue = true;
 
 void setup ()
 {
@@ -38,6 +42,8 @@ void setup ()
   }
   // Stop the robot  //
   {
+    bariere.attach(13);
+    bariere.write(oldSwitchValue * 100);
     stop();
     // autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
   }
@@ -54,6 +60,15 @@ void loop ()
       report.prob = 0;
       bluetoothLed.on();
       //serializeJsonPretty(bluetooth.json, Serial);
+      // Switch //
+      {
+        if (bluetooth.json["switch"].as<bool>() != oldSwitchValue)
+        {
+          oldSwitchValue = bluetooth.json["switch"].as<bool>();
+          Serial.println(oldSwitchValue);
+          bariere.write(oldSwitchValue * 100);
+        }
+      }
       // Keypad //
       {
 #if debugMode
@@ -61,6 +76,10 @@ void loop ()
 #endif
         switch (bluetooth.json["keypad"].as<int>())
         {
+          case 1:
+            break;
+          case 2:
+            break;
           case 4:
             autoPilot.line.find.left();
             break;
