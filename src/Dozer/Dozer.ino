@@ -3,7 +3,7 @@
 #include <Report.h>
 #include <BlackLineSensor.h>
 #include <Led.h>
-#include <Servo.h>
+#include <Cherry.h>
 
 #define loopTime 20
 #define debugMode false // Pass to false for production
@@ -21,12 +21,12 @@ Bluetooth bluetooth(&Serial1);
 Report report(&Serial, debugMode, 100);
 BlackLineSensor blackLine(A0, A1, A2);
 Led bluetoothLed(13);
-Servo bariere;
+Bariere bariere(13);
+ToCake toCake(11, 12);
+ToBasket toBasket(10);
 
 #include "AutoPilot.h"
 AutoPilot autoPilot;
-
-bool oldSwitchValue = true;
 
 void setup ()
 {
@@ -42,8 +42,6 @@ void setup ()
   }
   // Stop the robot  //
   {
-    bariere.attach(13);
-    bariere.write(oldSwitchValue * 100);
     stop();
     // autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
   }
@@ -62,12 +60,10 @@ void loop ()
       //serializeJsonPretty(bluetooth.json, Serial);
       // Switch //
       {
-        if (bluetooth.json["switch"].as<bool>() != oldSwitchValue)
-        {
-          oldSwitchValue = bluetooth.json["switch"].as<bool>();
-          Serial.println(oldSwitchValue);
-          bariere.write(oldSwitchValue * 100);
-        }
+#if debugMode
+        Serial.print("switch: "); Serial.println(bluetooth.json["switch"].as<bool>()); Serial.println();
+#endif
+        bariere.move(bluetooth.json["switch"].as<bool>());
       }
       // Keypad //
       {
@@ -79,6 +75,10 @@ void loop ()
           case 1:
             break;
           case 2:
+            toBasket.toggle();
+            break;
+          case 3:
+            toCake.open();
             break;
           case 4:
             autoPilot.line.find.left();
