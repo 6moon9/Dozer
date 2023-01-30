@@ -4,6 +4,7 @@
 #include <BlackLineSensor.h>
 #include <Led.h>
 #include <Cherry.h>
+#include <Timeout.h>
 
 #define loopTime 20
 #define debugMode false // Pass to false for production
