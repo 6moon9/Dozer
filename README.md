@@ -6,7 +6,6 @@ This is the robot code from the Ingenium team.
 The [src code](./src/) consists of an arduino sketch containing:
 * [`Dozer.ino`](#dozerino)
 * [`AutoPilot.h`](#autopiloth)
-* [`ExtraMeca.h`](#extramecah)
 
 #### [`Dozer.ino`](./src/Dozer/Dozer.ino)
 ##### Receive values
@@ -37,12 +36,6 @@ The [src code](./src/) consists of an arduino sketch containing:
 #### [`AutoPilot.h`](./src/Dozer/AutoPilot.h)
 Provides auto pilot functions such as:
 * Follow the black line
-
-#### [`ExtraMeca.h`](./src/Dozer/ExtraMeca.h)
-Extends the use of the mecanum library by adding:
-* sides (left and right)
-* sideway movements
-* diagonal movements
 
 ### Dependecies
 The INO file depends of the following list of libraries:
