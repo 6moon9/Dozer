@@ -7,11 +7,11 @@
 #include <Timeout.h>
 
 #define loopTime 20
-#define debugMode false // Pass to false for production
+#define debugMode false
 
 //                          left                                   right                              mapping
 //                   top            bottom                 top             bottom                  from      to
-Mecanum mecanum(34, 35, 4, 1,   38, 39, 2, 1,   25,     37, 36, 3, 1,   32, 33, 5, 1,    7,      0, 1023,  0, 180);
+Mecanum mecanum(34, 35, 4, 1,   38, 39, 2, 1,   25,     37, 36, 3, 1,   32, 33, 5, 1,    7,      0, 1023,  0, 150);
 //            in1,in2,pwm,offs in1,in2,pwm,offs,stby  in1,in2,pwm,offs in1,in2,pwm,offs,stby     min,max   min,max
 
 #include <ExtraMeca.h>
@@ -20,29 +20,39 @@ Mecaside right(Right);
 
 Bluetooth bluetooth(&Serial1);
 Report report(&Serial, debugMode, 100);
+
 BlackLineSensor blackLine(A0, A1, A2);
-Led bluetoothLed(13);
-Bariere bariere(13);
+
+LedRGB bluetoothLed(26, 27, 28);
+LedRGB led2(29, 30, 31);
+
+Barrier barrier(13);
 ToCake toCake(11, 12);
 ToBasket toBasket(10);
+Costume costume(9);
+Grabber grabber(7, 8, 650, 2600);
 
 #include "AutoPilot.h"
-AutoPilot autoPilot;
 
 void setup ()
 {
   // Serial setup //
   {
     Serial1.begin(9600);
-    Serial.begin(9600);
 #if debugMode
+    Serial.begin(9600);
     Serial.println("Serial communication's on...");
     Serial.println("Bluetooth communication's on...");
     Serial.println("Debug mode's on...");
 #endif
   }
-  // Stop the robot  //
+  // Setup and stop the robot  //
   {
+    barrier.setup();
+    toCake.setup();
+    toBasket.setup();
+    costume.setup();
+    bluetoothLed.off();
     stop();
     // autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
   }
@@ -57,14 +67,13 @@ void loop ()
     {
       report.ok++;
       report.prob = 0;
-      bluetoothLed.on();
-      //serializeJsonPretty(bluetooth.json, Serial);
+      bluetoothLed.on(0, 0, 255);
       // Switch //
       {
 #if debugMode
         Serial.print("switch: "); Serial.println(bluetooth.json["switch"].as<bool>()); Serial.println();
 #endif
-        bariere.move(bluetooth.json["switch"].as<bool>());
+        barrier.move(bluetooth.json["switch"].as<bool>());
       }
       // Keypad //
       {
@@ -74,6 +83,7 @@ void loop ()
         switch (bluetooth.json["keypad"].as<int>())
         {
           case 1:
+            grabber.grab();
             break;
           case 2:
             toBasket.toggle();
@@ -91,7 +101,7 @@ void loop ()
             autoPilot.line.find.right();
             break;
           case 10:
-            autoPilot.drift();
+            costume.deploy();
             break;
           case 11:
             stop();
@@ -133,7 +143,7 @@ void loop ()
       report.inv++;
       report.prob++;
       bluetooth.empty();
-      bluetoothLed.off();
+      bluetoothLed.on(255, 0, 0);
     }
   }
   else

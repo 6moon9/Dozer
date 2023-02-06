@@ -2,9 +2,9 @@ class AutoPilot
 {
   public:
     AutoPilot() {}
-    struct
+    struct Line
     {
-      struct
+      struct Follow
       {
         void forward (int speed = 1023)
         {
@@ -31,7 +31,7 @@ class AutoPilot
           }
         }
       } follow;
-      struct
+      struct Find
       {
         void left (int speed = 512)
         {
@@ -103,4 +103,4 @@ class AutoPilot
       left.backward(1023);
       delay(1000);
     }
-};
+} autoPilot;
