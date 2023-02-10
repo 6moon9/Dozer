@@ -23,8 +23,8 @@ Report report(&Serial, debugMode, 100);
 
 BlackLineSensor blackLine(A0, A1, A2);
 
-LedRGB bluetoothLed(26, 27, 28);
-LedRGB led2(29, 30, 31);
+LedRGB bluetoothLed(28, 27, 26);
+LedRGB led2(31, 30, 29);
 
 Barrier barrier(13);
 ToCake toCake(11, 12);
@@ -52,6 +52,7 @@ void setup ()
     toCake.setup();
     toBasket.setup();
     costume.setup();
+    grabber.setup();
     bluetoothLed.off();
     stop();
     // autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
