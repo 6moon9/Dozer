@@ -9,12 +9,21 @@
 #define loopTime 20
 #define debugMode false
 
-//                          left                                   right                              mapping
-//                   top            bottom                 top             bottom                  from      to
-Mecanum mecanum(34, 35, 4, 1,   38, 39, 2, 1,   25,     37, 36, 3, 1,   32, 33, 5, 1,    7,      0, 1023,  0, 150);
-//            in1,in2,pwm,offs in1,in2,pwm,offs,stby  in1,in2,pwm,offs in1,in2,pwm,offs,stby     min,max   min,max
+#define SERVO_1 13
+#define SERVO_2 12
+#define SERVO_3 11
+#define SERVO_4 10
+#define SERVO_5 9
+#define SERVO_6 8
+#define SERVO_7 7
+#define SERVO_8 6
 
-#include <ExtraMeca.h>
+//                          left                                  right                   mapping
+//                   top    bottom                 top             bottom           from      to
+Mecanum mecanum(34, 35, 4,   38, 39, 2,  25,     37, 36, 3,   32, 33, 5,  7,      0, 1023,  0, 150);
+//            in1,in2,pwm    in1,in2,pwm,stby  in1,in2,pwm,   in1,in2,pwm,stby     min,max   min,max
+
+#include <Mecaside.h>
 Mecaside left(Left);
 Mecaside right(Right);
 
@@ -23,14 +32,14 @@ Report report(&Serial, debugMode, 100);
 
 BlackLineSensor blackLine(A0, A1, A2);
 
-LedRGB bluetoothLed(28, 27, 26);
-LedRGB led2(31, 30, 29);
+LedRGB bluetoothLed(28, 27, 26, true);
+LedRGB led2(31, 30, 29, true);
 
-Barrier barrier(13);
-ToCake toCake(11, 12);
-ToBasket toBasket(10);
-Costume costume(9);
-Grabber grabber(7, 8, 650, 2600);
+Barrier barrier(SERVO_1);
+ToCake toCake(SERVO_2, SERVO_3, 90, 0, 40, 0);
+ToBasket toBasket(SERVO_4);
+Costume costume(SERVO_5);
+Grabber grabber(SERVO_6, SERVO_7, 650, 2600, 400, 1000, 0, 130, 0, 130);
 
 #include "AutoPilot.h"
 
@@ -39,8 +48,8 @@ void setup ()
   // Serial setup //
   {
     Serial1.begin(9600);
-#if debugMode
     Serial.begin(9600);
+#if debugMode
     Serial.println("Serial communication's on...");
     Serial.println("Bluetooth communication's on...");
     Serial.println("Debug mode's on...");
@@ -167,5 +176,4 @@ void stop ()
   Serial.println("stop"); Serial.println();
 #endif
   mecanum.stop();
-  // Add others actuators
 }
