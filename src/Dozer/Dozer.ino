@@ -35,11 +35,11 @@ BlackLineSensor blackLine(A0, A1, A2);
 LedRGB bluetoothLed(28, 27, 26, true);
 LedRGB led2(31, 30, 29, true);
 
-Barrier barrier(SERVO_1);
-ToCake toCake(SERVO_2, SERVO_3, 90, 0, 40, 0);
+Barrier barrier(SERVO_1, 10, 120);
+ToCake toCake(SERVO_2, SERVO_3, 90, 0, 50, 0);
 ToBasket toBasket(SERVO_4);
 Costume costume(SERVO_5);
-Grabber grabber(SERVO_6, SERVO_7, 650, 2600, 400, 1000, 0, 130, 0, 130);
+Grabber grabber(SERVO_7, SERVO_6, 650, 2600, 400, 1000, 0, 130, 0, 130);
 
 #include "AutoPilot.h"
 
