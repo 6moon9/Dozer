@@ -22,12 +22,13 @@ void setup() {
   toCake.setup();
   toBasket.setup();
   costume.setup();
-  grabber.grab();
-  toCake.open();
+  //grabber.grab();
+  //toCake.open();
+  costume.deploy();
 }
 
 void loop() {
-  Serial.println("Grabber: grab");
+  /*Serial.println("Grabber: grab");
   grabber.grab();
   delay(2000);
   Serial.println("Costume: deploy");
@@ -47,5 +48,5 @@ void loop() {
   delay(2000);
   Serial.println("ToBasket: close");
   toBasket.close();
-  delay(2000);
+  delay(2000);*/
 }

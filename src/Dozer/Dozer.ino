@@ -38,8 +38,8 @@ LedRGB led2(31, 30, 29, true);
 Barrier barrier(SERVO_1, 10, 120);
 ToCake toCake(SERVO_2, SERVO_3, 90, 0, 50, 0);
 ToBasket toBasket(SERVO_4);
-Costume costume(SERVO_5);
-Grabber grabber(SERVO_7, SERVO_6, 650, 2600, 400, 1000, 0, 130, 0, 130);
+Costume costume(SERVO_5, 0, 180);
+Grabber grabber(SERVO_7, SERVO_8, 650, 2600, 400, 1000, 0, 130, 0, 130);
 
 #include "AutoPilot.h"
 
@@ -61,6 +61,7 @@ void setup ()
     toCake.setup();
     toBasket.setup();
     costume.setup();
+    costume.retract();
     grabber.setup();
     bluetoothLed.off();
     stop();
@@ -102,13 +103,13 @@ void loop ()
             toCake.open();
             break;
           case 4:
-            autoPilot.line.find.left();
+            //autoPilot.line.find.left();
             break;
           case 5:
-            autoPilot.line.follow.forward();
+            //autoPilot.line.follow.forward();
             break;
           case 6:
-            autoPilot.line.find.right();
+            //autoPilot.line.find.right();
             break;
           case 10:
             costume.deploy();
@@ -117,7 +118,7 @@ void loop ()
             stop();
             break;
           case 12:
-            autoPilot.winDance();
+            //autoPilot.winDance();
             break;
         }
       }
