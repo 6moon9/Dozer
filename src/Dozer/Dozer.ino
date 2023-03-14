@@ -5,6 +5,7 @@
 #include <Led.h>
 #include <Cherry.h>
 #include <Timeout.h>
+#include <Digit.h>
 
 #define loopTime 20
 #define debugMode false
@@ -34,6 +35,7 @@ BlackLineSensor blackLine(A0, A1, A2);
 
 LedRGB bluetoothLed(28, 27, 26, true);
 LedRGB led2(31, 30, 29, true);
+Digit digit(0, 0);
 
 Barrier barrier(SERVO_1, 10, 120);
 ToCake toCake(SERVO_2, SERVO_3, 90, 0, 50, 0);
@@ -42,6 +44,8 @@ Costume costume(SERVO_6, 0, 180);
 Grabber grabber(SERVO_7, SERVO_8, 650, 2600, 400, 1000, 0, 130, 0, 130);
 
 #include "AutoPilot.h"
+
+int estimation = 70;
 
 void setup ()
 {
@@ -64,6 +68,7 @@ void setup ()
     costume.retract();
     grabber.setup();
     bluetoothLed.off();
+    digit.display(estimation);
     stop();
     // autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
   }
@@ -79,6 +84,16 @@ void loop ()
       report.ok++;
       report.prob = 0;
       bluetoothLed.on(0, 0, 255);
+      {
+#if debugMode
+        Serial.print("estimation: "); Serial.println(bluetooth.json["estimation"].as<int>()); Serial.println();
+#endif
+        if (bluetooth.json["estimation"].as<int>() != -1 && bluetooth.json["estimation"].as<int>() != estimation) {
+          estimation = bluetooth.json["estimation"].as<int>();
+          Serial.println(estimation);
+          digit.display(estimation);
+        }
+      }
       // Switch //
       {
 #if debugMode
@@ -116,9 +131,6 @@ void loop ()
             break;
           case 11:
             stop();
-            break;
-          case 12:
-            //autoPilot.winDance();
             break;
         }
       }
