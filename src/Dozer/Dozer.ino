@@ -38,7 +38,7 @@ LedRGB led2(31, 30, 29, true);
 Barrier barrier(SERVO_1, 10, 120);
 ToCake toCake(SERVO_2, SERVO_3, 90, 0, 50, 0);
 ToBasket toBasket(SERVO_4);
-Costume costume(SERVO_5, 0, 180);
+Costume costume(SERVO_6, 0, 180);
 Grabber grabber(SERVO_7, SERVO_8, 650, 2600, 400, 1000, 0, 130, 0, 130);
 
 #include "AutoPilot.h"
@@ -94,7 +94,7 @@ void loop ()
         switch (bluetooth.json["keypad"].as<int>())
         {
           case 1:
-            grabber.grab();
+            //grabber.grab();
             break;
           case 2:
             toBasket.toggle();
@@ -112,7 +112,7 @@ void loop ()
             //autoPilot.line.find.right();
             break;
           case 10:
-            costume.deploy();
+            costume.toggle();
             break;
           case 11:
             stop();
@@ -178,3 +178,29 @@ void stop ()
 #endif
   mecanum.stop();
 }
+/*void grabber_grab ()
+{
+    grabber_open();
+    delay(1500);
+    grabber_close();
+    delay(750);
+    grabber_up();
+    delay(1500);
+    grabber_open();
+}
+
+void grabber_open()
+{
+    servo2.write(to2);
+    servo1.write(from1);
+}
+
+void grabber_close()
+{
+    servo2.write(from2);
+}
+
+void grabber_up()
+{
+    servo1.write(to1);
+}*/
