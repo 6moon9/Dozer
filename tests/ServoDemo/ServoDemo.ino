@@ -9,11 +9,11 @@
 #define SERVO_7 7
 #define SERVO_8 6
 
-Barrier barrier(SERVO_1);
-ToCake toCake(SERVO_2, SERVO_3, 90, 0, 90, 0);
+Barrier barrier(SERVO_1, 10, 120);
+ToCake toCake(SERVO_2, SERVO_3, 90, 0, 50, 0);
 ToBasket toBasket(SERVO_4);
-Costume costume(SERVO_5);
-Grabber grabber(SERVO_6, SERVO_7, 650, 2600, 400, 1000, 0, 130, 0, 130);
+Costume costume(SERVO_6, 0, 180);
+Grabber grabber(SERVO_7, SERVO_8, 650, 2600, 400, 1000, 0, 130, 0, 130);
 
 void setup() {
   Serial.begin(9600);
@@ -22,13 +22,10 @@ void setup() {
   toCake.setup();
   toBasket.setup();
   costume.setup();
-  //grabber.grab();
-  //toCake.open();
-  costume.deploy();
 }
 
 void loop() {
-  /*Serial.println("Grabber: grab");
+  Serial.println("Grabber: grab");
   grabber.grab();
   delay(2000);
   Serial.println("Costume: deploy");
@@ -48,5 +45,5 @@ void loop() {
   delay(2000);
   Serial.println("ToBasket: close");
   toBasket.close();
-  delay(2000);*/
+  delay(2000);
 }

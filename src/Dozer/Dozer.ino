@@ -9,6 +9,7 @@
 
 #define loopTime 20
 #define debugMode false
+#define tankMode true
 
 #define SERVO_1 13
 #define SERVO_2 12
@@ -19,10 +20,12 @@
 #define SERVO_7 7
 #define SERVO_8 6
 
-//                          left                                  right                   mapping
-//                   top    bottom                 top             bottom           from      to
-Mecanum mecanum(34, 35, 4,   38, 39, 2,  25,     37, 36, 3,   32, 33, 5,  7,      0, 1023,  0, 150);
-//            in1,in2,pwm    in1,in2,pwm,stby  in1,in2,pwm,   in1,in2,pwm,stby     min,max   min,max
+//                           left                              right                    mapping           //
+//                 __________________________        __________________________       ____________        //
+//                 top        bottom     stby        top        bottom    stby       from       to        //
+//              _________    _________    __      _________    _________    _       _______   ______      //
+Mecanum mecanum(34, 35, 4,   38, 39, 2,   25,     37, 36, 3,   32, 33, 5,   7,      0, 1023,  0, 150);    //
+//             in1,in2,pwm  in1,in2,pwm          in1,in2,pwm, in1,in2,pwm           min,max   min,max     //
 
 #include <Mecaside.h>
 Mecaside left(Left);
@@ -144,8 +147,13 @@ void loop ()
 #endif
         // Y
         {
+#if tankMode
           left.move(bluetooth.json["joysticks"]["left"]["y"].as<int>());
           right.move(bluetooth.json["joysticks"]["right"]["y"].as<int>());
+#else
+          left.move(bluetooth.json["joysticks"]["left"]["y"].as<int>());
+          right.move(bluetooth.json["joysticks"]["left"]["y"].as<int>());
+#endif
         }
         // X
         {
