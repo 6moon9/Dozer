@@ -38,7 +38,7 @@ BlackLineSensor blackLine(A0, A1, A2);
 
 LedRGB bluetoothLed(28, 27, 26, true);
 LedRGB led2(31, 30, 29, true);
-Digit digit(0, 0);
+Digit digit(49, 48, 7);
 
 Barrier barrier(SERVO_1, 10, 120);
 ToCake toCake(SERVO_2, SERVO_3, 90, 0, 50, 0);
