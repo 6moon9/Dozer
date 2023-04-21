@@ -24,7 +24,7 @@
 //                 __________________________        __________________________       ____________        //
 //                 top        bottom     stby        top        bottom    stby       from       to        //
 //              _________    _________    __      _________    _________    _       _______   ______      //
-Mecanum mecanum(34, 35, 4,   38, 39, 2,   25,     37, 36, 3,   32, 33, 5,   7,      0, 1023,  0, 150);    //
+Mecanum mecanum(34, 35, 4,   38, 39, 2,   25,     37, 36, 3,   33, 32, 5,   7,      0, 1023,  0, 255);    //
 //             in1,in2,pwm  in1,in2,pwm          in1,in2,pwm, in1,in2,pwm           min,max   min,max     //
 
 #include <Mecaside.h>
@@ -40,11 +40,12 @@ LedRGB bluetoothLed(28, 27, 26, true);
 LedRGB led2(31, 30, 29, true);
 Digit digit(49, 48, 7);
 
-Barrier barrier(SERVO_1, 10, 120);
-ToCake toCake(SERVO_2, SERVO_3, 90, 0, 50, 0);
-ToBasket toBasket(SERVO_4);
-Costume costume(SERVO_6, 0, 180);
-Grabber grabber(SERVO_7, SERVO_8, 650, 2600, 400, 1000, 0, 130, 0, 130);
+SingleServo barrier(SERVO_1, 10, 120);
+SingleServo mandible(SERVO_2, 10, 120);
+DoubleServo toCake(SERVO_3, SERVO_4, 90, 0, 50, 0);
+SingleServo toBasket(SERVO_5);
+SingleServo costume(SERVO_6, 0, 180);
+Vacuum vacuum(SERVO_7, SERVO_8, 0, 30);
 
 #include "AutoPilot.h"
 
@@ -64,21 +65,22 @@ void setup ()
   }
   // Setup and stop the robot  //
   {
+    pinMode(50, OUTPUT);
+    digitalWrite(50, LOW); // The ground pin of the digit
     barrier.setup();
     toCake.setup();
     toBasket.setup();
     costume.setup();
-    costume.retract();
-    grabber.setup();
+    costume.close();
     bluetoothLed.off();
     digit.display(estimation);
     stop();
-    // autoPilot.drift(); // To drift // Only for fun // Do not use in tournament
   }
 }
 
 void loop ()
 {
+  vacuum.move();
   report.print();
   if (bluetooth.receive())
   {
@@ -102,7 +104,7 @@ void loop ()
 #if debugMode
         Serial.print("switch: "); Serial.println(bluetooth.json["switch"].as<bool>()); Serial.println();
 #endif
-        barrier.move(bluetooth.json["switch"].as<bool>());
+        mandible.move(bluetooth.json["switch"].as<bool>());
       }
       // Keypad //
       {
@@ -112,7 +114,7 @@ void loop ()
         switch (bluetooth.json["keypad"].as<int>())
         {
           case 1:
-            //grabber.grab();
+            barrier.toggle();
             break;
           case 2:
             toBasket.toggle();
@@ -121,13 +123,17 @@ void loop ()
             toCake.open();
             break;
           case 4:
-            //autoPilot.line.find.left();
+            vacuum.toggle();
             break;
           case 5:
-            //autoPilot.line.follow.forward();
             break;
           case 6:
-            //autoPilot.line.find.right();
+            break;
+          case 7:
+            break;
+          case 8:
+            break;
+          case 9:
             break;
           case 10:
             costume.toggle();
@@ -198,29 +204,3 @@ void stop ()
 #endif
   mecanum.stop();
 }
-/*void grabber_grab ()
-{
-    grabber_open();
-    delay(1500);
-    grabber_close();
-    delay(750);
-    grabber_up();
-    delay(1500);
-    grabber_open();
-}
-
-void grabber_open()
-{
-    servo2.write(to2);
-    servo1.write(from1);
-}
-
-void grabber_close()
-{
-    servo2.write(from2);
-}
-
-void grabber_up()
-{
-    servo1.write(to1);
-}*/
