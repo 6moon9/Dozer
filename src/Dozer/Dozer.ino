@@ -4,8 +4,8 @@
 #include <BlackLineSensor.h>
 #include <Led.h>
 #include <Cherry.h>
-#include <Timeout.h>
 #include <Digit.h>
+#include <Timino.h>
 
 #define loopTime 20
 #define debugMode false
@@ -40,12 +40,23 @@ LedRGB bluetoothLed(28, 27, 26, true);
 LedRGB led2(31, 30, 29, true);
 Digit digit(49, 48, 7);
 
-SingleServo barrier(SERVO_1, 10, 120);
-SingleServo mandible(SERVO_2, 10, 120);
-DoubleServo toCake(SERVO_3, SERVO_4, 90, 0, 50, 0);
+SingleServo barrier(SERVO_1, 0, 90);
+SingleServo mandible(SERVO_2, 0, 90);
+DoubleServo toCake(SERVO_3, SERVO_4, 90, 0, 0, 90);
 SingleServo toBasket(SERVO_5);
-SingleServo costume(SERVO_6, 0, 180);
-Vacuum vacuum(SERVO_7, SERVO_8, 0, 30);
+SingleServo costume(SERVO_6, 0, 40);
+Vacuum vacuum(SERVO_7, SingleServo(SERVO_8, 0, 70));
+void vacuumOff()
+{
+  vacuum.off();
+}
+Timeout vacuumTimeout(vacuumOff, 3000, false);
+void vacuumSequence ()
+{
+  vacuum.on();
+  vacuumTimeout.start();
+}
+Interval vacuumLoop(vacuumSequence, 5000, false);
 
 #include "AutoPilot.h"
 
@@ -67,10 +78,12 @@ void setup ()
   {
     pinMode(50, OUTPUT);
     digitalWrite(50, LOW); // The ground pin of the digit
+    mandible.setup();
     barrier.setup();
     toCake.setup();
     toBasket.setup();
     costume.setup();
+    vacuum.setup();
     costume.close();
     bluetoothLed.off();
     digit.display(estimation);
@@ -80,7 +93,8 @@ void setup ()
 
 void loop ()
 {
-  vacuum.move();
+  vacuumLoop.loop();
+  vacuumTimeout.loop();
   report.print();
   if (bluetooth.receive())
   {
@@ -95,7 +109,6 @@ void loop ()
 #endif
         if (bluetooth.json["estimation"].as<int>() != -1 && bluetooth.json["estimation"].as<int>() != estimation) {
           estimation = bluetooth.json["estimation"].as<int>();
-          Serial.println(estimation);
           digit.display(estimation);
         }
       }
@@ -117,19 +130,26 @@ void loop ()
             barrier.toggle();
             break;
           case 2:
-            toBasket.toggle();
             break;
           case 3:
             toCake.open();
             break;
           case 4:
-            vacuum.toggle();
+            if (vacuum.toggle())
+              vacuumLoop.start();
+            else
+            {
+              vacuumLoop.cancel();
+              vacuumTimeout.cancel();
+            }
             break;
           case 5:
             break;
           case 6:
+            toBasket.toggle();
             break;
           case 7:
+            autoPilot.putCherries();
             break;
           case 8:
             break;
@@ -203,4 +223,7 @@ void stop ()
   Serial.println("stop"); Serial.println();
 #endif
   mecanum.stop();
+  vacuumLoop.cancel();
+  vacuumTimeout.cancel();
+  vacuum.off();
 }

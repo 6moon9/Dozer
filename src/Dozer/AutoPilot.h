@@ -103,4 +103,17 @@ class AutoPilot
       left.backward(1023);
       delay(1000);
     }
+    void putCherries()
+    {
+      int time = 500;
+      for (int i = 0; i < 3; i++)
+      {
+        toCake.open();
+        delay(200);
+        mecanum.forward(1023);
+        delay(time);
+        mecanum.stop();
+        delay(200);
+      }
+    }
 } autoPilot;
