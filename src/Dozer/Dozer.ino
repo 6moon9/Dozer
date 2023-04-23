@@ -45,17 +45,10 @@ SingleServo mandible(SERVO_2, 0, 90);
 DoubleServo toCake(SERVO_3, SERVO_4, 90, 0, 0, 90);
 SingleServo toBasket(SERVO_5);
 SingleServo costume(SERVO_6, 0, 40);
-Vacuum vacuum(SERVO_7, SingleServo(SERVO_8, 0, 70));
-void vacuumOff()
-{
-  vacuum.off();
-}
+Vacuum vacuum(SERVO_7, SingleServo(SERVO_8, 70, 0), true);
+void vacuumOff(){vacuum.off();}
 Timeout vacuumTimeout(vacuumOff, 3000, false);
-void vacuumSequence ()
-{
-  vacuum.on();
-  vacuumTimeout.start();
-}
+void vacuumSequence (){vacuum.on(); vacuumTimeout.start();}
 Interval vacuumLoop(vacuumSequence, 5000, false);
 
 #include "AutoPilot.h"
@@ -79,12 +72,15 @@ void setup ()
     pinMode(50, OUTPUT);
     digitalWrite(50, LOW); // The ground pin of the digit
     mandible.setup();
+    mandible.open();
     barrier.setup();
+    barrier.close();
     toCake.setup();
     toBasket.setup();
     costume.setup();
-    vacuum.setup();
     costume.close();
+    vacuum.setup();
+    vacuum.off();
     bluetoothLed.off();
     digit.display(estimation);
     stop();
