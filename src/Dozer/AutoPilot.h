@@ -105,6 +105,7 @@ class AutoPilot
     }
     void putCherries()
     {
+      mecanum.setMaxSpeed(100);
       int time = 500;
       for (int i = 0; i < 3; i++)
       {
@@ -115,5 +116,6 @@ class AutoPilot
         mecanum.stop();
         delay(200);
       }
+      mecanum.setMaxSpeed(defaultSpeed);
     }
 } autoPilot;

@@ -10,6 +10,7 @@
 #define loopTime 20
 #define debugMode false
 #define tankMode true
+#define defaultSpeed 230
 
 #define SERVO_1 13
 #define SERVO_2 12
@@ -24,7 +25,7 @@
 //                 __________________________        __________________________       ____________        //
 //                 top        bottom     stby        top        bottom    stby       from       to        //
 //              _________    _________    __      _________    _________    _       _______   ______      //
-Mecanum mecanum(34, 35, 4,   38, 39, 2,   25,     37, 36, 3,   33, 32, 5,   7,      0, 1023,  0, 255);    //
+Mecanum mecanum(35, 34, 4,   39, 38, 2,   25,     36, 37, 3,   32, 33, 5,   7,      0, 1023,  0, defaultSpeed);    //
 //             in1,in2,pwm  in1,in2,pwm          in1,in2,pwm, in1,in2,pwm           min,max   min,max     //
 
 #include <Mecaside.h>
@@ -40,9 +41,9 @@ LedRGB bluetoothLed(28, 27, 26, true);
 LedRGB led2(31, 30, 29, true);
 Digit digit(49, 48, 7);
 
-SingleServo barrier(SERVO_1, 0, 90);
-SingleServo mandible(SERVO_2, 0, 90);
-DoubleServo toCake(SERVO_3, SERVO_4, 90, 0, 0, 90);
+SingleServo barrier(SERVO_1, 90, 0);
+SingleServo mandible(SERVO_2, 150, 60);
+DoubleServo toCake(SERVO_4, SERVO_3, 90, 0, 0, 90);
 SingleServo toBasket(SERVO_5);
 SingleServo costume(SERVO_6, 0, 40);
 Vacuum vacuum(SERVO_7, SingleServo(SERVO_8, 70, 0), true);
@@ -60,30 +61,34 @@ void setup ()
   // Serial setup //
   {
     Serial1.begin(9600);
-    Serial.begin(9600);
 #if debugMode
-    Serial.println("Serial communication's on...");
-    Serial.println("Bluetooth communication's on...");
-    Serial.println("Debug mode's on...");
+    Serial.begin(9600);
+    Serial.println("Debug mode is on.");
+    Serial.println("Serial communication is on...");
+    Serial.println("Bluetooth communication is on...");
 #endif
   }
   // Setup and stop the robot  //
   {
     pinMode(50, OUTPUT);
     digitalWrite(50, LOW); // The ground pin of the digit
+    digit.display(estimation);
     mandible.setup();
     mandible.open();
     barrier.setup();
     barrier.close();
     toCake.setup();
     toBasket.setup();
+    toBasket.close();
     costume.setup();
     costume.close();
     vacuum.setup();
     vacuum.off();
     bluetoothLed.off();
-    digit.display(estimation);
     stop();
+#if debugMode
+    Serial.println("All systems are running.");
+#endif
   }
 }
 
@@ -132,11 +137,17 @@ void loop ()
             break;
           case 4:
             if (vacuum.toggle())
+            {
               vacuumLoop.start();
+              mecanum.setMaxSpeed(70);
+              mandible.servo.write(0);
+            }
             else
             {
               vacuumLoop.cancel();
               vacuumTimeout.cancel();
+              mecanum.setMaxSpeed(defaultSpeed);
+              mandible.move();
             }
             break;
           case 5:
@@ -150,6 +161,12 @@ void loop ()
           case 8:
             break;
           case 9:
+            mandible.servo.write(0);
+            barrier.close();
+            toCake.openAll();
+            toBasket.open();
+            vacuum.off();
+            mecanum.stop();
             break;
           case 10:
             costume.toggle();
