@@ -44,7 +44,7 @@ Digit digit(49, 48, 7);
 SingleServo barrier(SERVO_1, 90, 0);
 SingleServo mandible(SERVO_2, 150, 60);
 DoubleServo toCake(SERVO_4, SERVO_3, 90, 0, 0, 90);
-SingleServo toBasket(SERVO_5);
+SingleServo toBasket(SERVO_5, 0, 50);
 SingleServo costume(SERVO_6, 0, 40);
 Vacuum vacuum(SERVO_7, SingleServo(SERVO_8, 70, 0), true);
 void vacuumOff(){vacuum.off();}
