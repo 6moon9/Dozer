@@ -103,7 +103,7 @@ class AutoPilot
       left.backward(1023);
       delay(1000);
     }
-    void putCherries()
+    void putCherriesForward()
     {
       mecanum.setMaxSpeed(100);
       int time = 500;
@@ -112,6 +112,21 @@ class AutoPilot
         toCake.open();
         delay(200);
         mecanum.forward(1023);
+        delay(time);
+        mecanum.stop();
+        delay(200);
+      }
+      mecanum.setMaxSpeed(defaultSpeed);
+    }
+    void putCherriesBackward()
+    {
+      mecanum.setMaxSpeed(100);
+      int time = 500;
+      for (int i = 0; i < 3; i++)
+      {
+        toCake.open();
+        delay(200);
+        mecanum.backward(1023);
         delay(time);
         mecanum.stop();
         delay(200);

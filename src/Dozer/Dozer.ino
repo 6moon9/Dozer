@@ -47,14 +47,20 @@ DoubleServo toCake(SERVO_4, SERVO_3, 90, 0, 0, 90);
 SingleServo toBasket(SERVO_5, 0, 50);
 SingleServo costume(SERVO_6, 0, 40);
 Vacuum vacuum(SERVO_7, SingleServo(SERVO_8, 70, 0), true);
-void vacuumOff(){vacuum.off();}
+void vacuumOff() {
+  vacuum.off();
+}
 Timeout vacuumTimeout(vacuumOff, 3000, false);
-void vacuumSequence (){vacuum.on(); vacuumTimeout.start();}
+void vacuumSequence () {
+  vacuum.on();
+  vacuumTimeout.start();
+}
 Interval vacuumLoop(vacuumSequence, 5000, false);
 
 #include "AutoPilot.h"
 
 int estimation = 70;
+bool retract = true;
 
 void setup ()
 {
@@ -131,6 +137,11 @@ void loop ()
             barrier.toggle();
             break;
           case 2:
+            if (retract)
+              mandible.servo.write(0);
+            else
+              mandible.move();
+            retract = !retract;
             break;
           case 3:
             toCake.open();
@@ -153,20 +164,25 @@ void loop ()
           case 5:
             break;
           case 6:
+            vacuum.servo.close();
+            delay(100);
             toBasket.toggle();
             break;
           case 7:
-            autoPilot.putCherries();
+            barrier.open();
+            delay(100);
+            autoPilot.putCherriesForward();
             break;
           case 8:
-            break;
-          case 9:
             mandible.servo.write(0);
             barrier.close();
             toCake.openAll();
-            toBasket.open();
-            vacuum.off();
             mecanum.stop();
+            break;
+          case 9:
+            mandible.open();
+            delay(100);
+            autoPilot.putCherriesBackward();
             break;
           case 10:
             costume.toggle();
