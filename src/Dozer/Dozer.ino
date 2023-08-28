@@ -44,22 +44,22 @@ Digit digit(49, 48, 7);
 SingleServo barrier(SERVO_1, 90, 0);
 SingleServo mandible(SERVO_2, 150, 60);
 DoubleServo toCake(SERVO_4, SERVO_3, 90, 0, 0, 90);
-SingleServo toBasket(SERVO_5, 0, 50);
+SingleServo toBasket(SERVO_5, 10, 45);
 SingleServo costume(SERVO_6, 0, 40);
 Vacuum vacuum(SERVO_7, SingleServo(SERVO_8, 70, 0), true);
 void vacuumOff() {
   vacuum.off();
 }
-Timeout vacuumTimeout(vacuumOff, 3000, false);
+Timeout vacuumTimeout(vacuumOff, 4000, false);
 void vacuumSequence () {
   vacuum.on();
   vacuumTimeout.start();
 }
-Interval vacuumLoop(vacuumSequence, 5000, false);
+Interval vacuumLoop(vacuumSequence, 5500, false);
 
 #include "AutoPilot.h"
 
-int estimation = 70;
+int estimation = 60;
 bool retract = true;
 
 void setup ()
@@ -150,7 +150,7 @@ void loop ()
             if (vacuum.toggle())
             {
               vacuumLoop.start();
-              mecanum.setMaxSpeed(70);
+              mecanum.setMaxSpeed(60);
               mandible.servo.write(0);
             }
             else
@@ -175,7 +175,7 @@ void loop ()
             break;
           case 8:
             mandible.servo.write(0);
-            barrier.close();
+            barrier.open();
             toCake.openAll();
             mecanum.stop();
             break;
